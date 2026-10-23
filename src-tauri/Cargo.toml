@@ -1,0 +1,40 @@
+[package]
+name = "bussola"
+version = "0.1.0"
+description = "Gestione attività d'ufficio"
+authors = []
+edition = "2024"
+
+[lib]
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+name = "bussola_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_jcs = "0.2.0"
+ed25519-dalek = "3.0.0"
+argon2 = "0.6.0"
+chacha20poly1305 = "0.11.0"
+rand = "0.10.3"
+sha2 = "0.11.1"
+thiserror = "2.0.21"
+zeroize = "1.9.1"
+uuid = { version = "1.28.0", features = ["v7"] }
+
+
+[dev-dependencies]
+tempfile = "3.27.0"
+
+[profile.release]
+strip = true
+lto = true
+codegen-units = 1
+opt-level = "s"
