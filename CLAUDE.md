@@ -72,7 +72,7 @@ Poi ricordami di:
 ## Build su GitHub Actions
 
 File `.github/workflows/build-windows.yml`:
-- trigger: `workflow_dispatch`, push di tag `v*`, e `pull_request`/push su `main` per i soli test;
+- trigger: `workflow_dispatch` per la build (**solo manuale**, lanciata dall'utente dal web: nessuna build automatica, nemmeno sui tag), e `pull_request`/push su `main` per i soli test;
 - job di test su `ubuntu-latest` o `windows-latest`: `cargo test` in `src-tauri/`;
 - job di build su **`windows-latest`**: checkout, `actions/setup-node` (con cache npm), `dtolnay/rust-toolchain@stable`, `swatinem/rust-cache` (workspace `src-tauri`), `npm ci`, poi `npm run tauri build -- --no-bundle` (produce solo l'`.exe`, niente installer; verifica che il flag esista ancora nella CLI attuale);
 - variabile d'ambiente `RUSTFLAGS: -C target-feature=+crt-static --remap-path-prefix=${{ github.workspace }}=.` (CRT statico: non serve il runtime Visual C++ sui PC; il remap evita che percorsi del runner finiscano nell'exe). Nota: `RUSTFLAGS` da ambiente sostituisce quelli di `.cargo/config.toml`, quindi mettili tutti qui;
