@@ -1,11 +1,8 @@
 name: build-windows
 
 on:
+  # Manual runs only (Actions -> build-windows -> Run workflow): no push/PR triggers.
   workflow_dispatch:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
 
 permissions:
   contents: read
@@ -40,8 +37,6 @@ jobs:
         run: cargo test --locked
 
   build:
-    # Release exe only on manual runs (Actions -> Run workflow); push/PR on main run tests only.
-    if: github.event_name == 'workflow_dispatch'
     needs: test
     runs-on: windows-latest
     env:

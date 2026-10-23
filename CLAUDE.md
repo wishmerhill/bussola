@@ -12,12 +12,12 @@ Lo sviluppo avviene su **macOS** (VS Code + Claude Code). La build per Windows l
 2. **Nessun `sudo`.** Mai.
 3. **Strumenti globali: chiedi prima.** Dipendenze di progetto (`npm install`, `cargo fetch`) le installi tu. Strumenti globali (Rust, Node, GitHub CLI) mancanti: dimmi cosa manca e il comando consigliato, e aspetta il mio ok prima di installarli.
 4. **Lingua:** parla con me in italiano. Interfaccia dell'app in italiano. Codice e commenti tecnici in inglese.
-   - **Messaggi di commit in inglese**, Conventional Commits con scope quando utile (`feat(sync): ...`, `ci(windows): ...`, `docs(readme): ...`): oggetto all'imperativo e minuscolo, senza punto finale; corpo a righe di ~78 colonne che spiega cosa cambia e perché (omesso solo per modifiche banali); trailer `Co-Authored-By` in fondo. Identità git globale, commit non firmati.
+   - **Messaggi di commit in inglese**, Conventional Commits con scope quando utile (`feat(sync): ...`, `ci(windows): ...`, `docs(readme): ...`): oggetto all'imperativo e minuscolo, senza punto finale; corpo a righe di ~78 colonne che spiega cosa cambia e perché (omesso solo per modifiche banali); trailer `Co-Authored-By` in fondo. Identità git globale (email reale, accettata anche su repo pubblico), commit non firmati.
 5. **Anonimato dei contenuti (requisito forte).** Riguarda i contenuti potenzialmente sensibili dell'app, non l'identità di chi committa (autore ed email dei commit sono quelli globali dell'utente). Nessun riferimento a enti, reparti, strutture, nomi di persone, percorsi di rete reali, indirizzi o loghi: né nel codice, né nei commenti, né nei dati di esempio, né nei messaggi di commit, né nei metadati dell'eseguibile. Dati di test sempre generici e inventati ("Utente A", "Task di prova").
 6. **Nessuna funzione di rete esterna.** Niente telemetria, updater, chiamate HTTP, font o script da CDN, plugin Tauri che usano la rete. Content Security Policy rigida, tutto il contenuto della UI è locale.
 7. **Procedi per fasi** (vedi sotto). A fine fase: test verdi, commit, riassunto in poche righe, poi **aspetta il mio via libera**. Non anticipare le fasi successive.
 8. Prima di scrivere codice che dipende da API di Tauri v2, plugin o crate, **verifica la documentazione attuale**: le API cambiano.
-9. **GitHub Actions solo su mia richiesta.** Non avviare run della CI (né build né test) senza chiedermelo: niente `gh workflow run`, e niente `git push` senza il mio ok esplicito, perché ogni push o PR su `main` fa partire il job di test (minuti Windows ×2). Commit locali liberi.
+9. **GitHub Actions solo su mia richiesta.** Non avviare run della CI (né build né test) senza chiedermelo: niente `gh workflow run`. Il workflow non ha trigger automatici (solo `workflow_dispatch`) e non vanno aggiunti. Niente `git push` senza il mio ok esplicito. Commit locali liberi.
 
 ---
 
@@ -29,7 +29,7 @@ Esegui solo questi passi, poi fermati e riferisci.
    - **Ambiente locale attuale (deciso, da non cambiare):** Node 26 e Rust stable installati con **Homebrew** (niente rustup: il Rust di Homebrew è condiviso con altri progetti), `gh` non installato (il repo GitHub si crea da web). Non proporre di cambiare questi strumenti. Senza rustup non si aggiungono target o toolchain in locale: la build Windows la fa solo la CI.
    - **In CI** si usa invece una Node **LTS** (`actions/setup-node`) e Rust stable via `dtolnay/rust-toolchain`.
 2. **Git:** se non esiste, `git init -b main`. Crea `.gitignore` (`node_modules/`, `dist/`, `build/`, `.svelte-kit/`, `src-tauri/target/`, `.DS_Store`, `.env*`, `*.log`) e `.gitattributes` (`* text=auto eol=lf`).
-3. **Identità dei commit:** si usa l'identità git **globale** già configurata (nome ed email reali vanno bene). Nessuna configurazione locale, nessun indirizzo `noreply`.
+3. **Identità dei commit:** si usa l'identità git **globale** già configurata (nome ed email reali vanno bene, anche se il repo è pubblico). Nessuna configurazione locale, nessun indirizzo `noreply`.
 4. **Scaffold Tauri v2 + Svelte + TypeScript** direttamente in questa cartella, con `npm create tauri-app@latest` (controlla `--help` per le opzioni non interattive). Se la cartella non è vuota (c'è questo file) e il tool rifiuta, genera in una sottocartella temporanea, sposta il contenuto qui e rimuovi la temporanea, **senza sovrascrivere `CLAUDE.md`**.
    - Nome prodotto: `Bussola`. Package/crate: `bussola`. Identifier: `local.bussola.app`.
    - Nei metadati (`Cargo.toml`, `package.json`, `tauri.conf.json`): campo autori vuoto, descrizione generica ("Gestione attività d'ufficio"), nessun nome di società.
@@ -46,7 +46,7 @@ Esegui solo questi passi, poi fermati e riferisci.
 
 ## Creazione del repository GitHub (istruzioni da darmi a fine bootstrap)
 
-Il repo deve essere **privato** e senza riferimenti all'ente. Proponi le due strade:
+Il repo è **pubblico** (`wishmerhill/bussola`, licenza GPL-3.0-or-later), senza riferimenti all'ente: per questo vale con ancora più forza la regola 5. Proponi le due strade:
 
 **A. Con GitHub CLI**
 ```
@@ -56,7 +56,7 @@ gh repo create bussola --private --source=. --remote=origin --push
 ```
 
 **B. Da web**
-1. Su github.com: *New repository* → nome `bussola` → **Private** → **senza** README, `.gitignore` o licenza (il repo deve nascere vuoto).
+1. Su github.com: *New repository* → nome `bussola` → **Public** → **senza** README, `.gitignore` o licenza (il repo deve nascere vuoto).
 2. Poi in questa cartella:
 ```
 git remote add origin git@github.com:<utente>/bussola.git    # oppure URL https
@@ -67,16 +67,16 @@ Poi ricordami di:
 - attivare la **2FA** sull'account GitHub;
 - controllare che **Actions** sia abilitato (Settings → Actions);
 - lanciare la prima build da *Actions → build-windows → Run workflow* e scaricare l'`.exe` dagli **Artifacts** del run;
-- tenere presente che i runner Windows consumano i minuti gratuiti del piano a velocità doppia (per questo uso, di norma, non è un problema).
+- tenere presente che sui repo pubblici i minuti delle Actions sui runner standard sono gratuiti (sui privati Windows conta ×2).
 
 ---
 
 ## Build su GitHub Actions
 
 File `.github/workflows/build-windows.yml`:
-- trigger: `workflow_dispatch` per la build (**solo manuale**, lanciata dall'utente dal web: nessuna build automatica, nemmeno sui tag), e `pull_request`/push su `main` per i soli test;
+- trigger: **solo `workflow_dispatch`** (lanciato a mano dall'utente dal web), per test e build: nessun trigger su push, PR o tag;
 - job di test su `ubuntu-latest` o `windows-latest`: `cargo test` in `src-tauri/`;
-- job di build su **`windows-latest`**: checkout, `actions/setup-node` (con cache npm), `dtolnay/rust-toolchain@stable`, `swatinem/rust-cache` (workspace `src-tauri`), `npm ci`, poi `npm run tauri build -- --no-bundle` (produce solo l'`.exe`, niente installer; verifica che il flag esista ancora nella CLI attuale);
+- job di build su **`windows-latest`**, dopo i test: checkout, `actions/setup-node` (con cache npm), `dtolnay/rust-toolchain@stable`, `swatinem/rust-cache` (workspace `src-tauri`), `npm ci`, poi `npm run tauri build -- --no-bundle` (produce solo l'`.exe`, niente installer; verifica che il flag esista ancora nella CLI attuale);
 - variabile d'ambiente `RUSTFLAGS: -C target-feature=+crt-static --remap-path-prefix=${{ github.workspace }}=.` (CRT statico: non serve il runtime Visual C++ sui PC; il remap evita che percorsi del runner finiscano nell'exe). Nota: `RUSTFLAGS` da ambiente sostituisce quelli di `.cargo/config.toml`, quindi mettili tutti qui;
 - `actions/upload-artifact` dell'exe prodotto in `src-tauri/target/release/`.
 

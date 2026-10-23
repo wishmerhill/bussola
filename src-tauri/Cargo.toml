@@ -3,6 +3,7 @@ name = "bussola"
 version = "0.1.0"
 description = "Gestione attività d'ufficio"
 authors = []
+license = "GPL-3.0-or-later"
 edition = "2024"
 
 [lib]
