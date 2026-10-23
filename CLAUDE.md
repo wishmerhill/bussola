@@ -16,6 +16,7 @@ Lo sviluppo avviene su **macOS** (VS Code + Claude Code). La build per Windows l
 6. **Nessuna funzione di rete esterna.** Niente telemetria, updater, chiamate HTTP, font o script da CDN, plugin Tauri che usano la rete. Content Security Policy rigida, tutto il contenuto della UI è locale.
 7. **Procedi per fasi** (vedi sotto). A fine fase: test verdi, commit, riassunto in poche righe, poi **aspetta il mio via libera**. Non anticipare le fasi successive.
 8. Prima di scrivere codice che dipende da API di Tauri v2, plugin o crate, **verifica la documentazione attuale**: le API cambiano.
+9. **GitHub Actions solo su mia richiesta.** Non avviare run della CI (né build né test) senza chiedermelo: niente `gh workflow run`, e niente `git push` senza il mio ok esplicito, perché ogni push o PR su `main` fa partire il job di test (minuti Windows ×2). Commit locali liberi.
 
 ---
 
